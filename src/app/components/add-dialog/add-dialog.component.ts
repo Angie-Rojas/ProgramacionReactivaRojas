@@ -1,15 +1,15 @@
-import { ThisReceiver } from '@angular/compiler';
-import { Component, Inject, INJECTOR, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 import { Curso } from '../tabla/tabla.component';
 
 @Component({
-  selector: 'app-edit-dialog',
-  templateUrl: './edit-dialog.component.html',
-  styleUrls: ['./edit-dialog.component.scss']
+  selector: 'app-add-dialog',
+  templateUrl: './add-dialog.component.html',
+  styleUrls: ['./add-dialog.component.scss']
 })
-export class EditDialogComponent implements OnInit {
+export class AddDialogComponent implements OnInit {
 
   formulario: FormGroup;
 

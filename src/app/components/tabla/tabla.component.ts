@@ -1,24 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 
 export interface Curso {
   nombre: string;
-  comision: string;
-  profesor: string;
-  numeroEstudiantes: number;
-  matriculaAbierta: boolean;
+  curso: string;
+  nota: string;
 }
 
-const ELEMENT_DATA: Curso [] = [
-  {nombre: 'Angular', comision: '32310', profesor: 'Abner Garcia', numeroEstudiantes: 65, matriculaAbierta: true},
-  {nombre: 'VueJS', comision: '33320', profesor: 'Abner Garcia', numeroEstudiantes: 34, matriculaAbierta: true},
-  {nombre: 'ReactJS', comision: '35310', profesor: 'Abner Garcia', numeroEstudiantes: 87, matriculaAbierta: false},
-  {nombre: 'UI/UX', comision: '31310', profesor: 'Abner Garcia', numeroEstudiantes: 12, matriculaAbierta: true},
-  {nombre: '.NET', comision: '38310', profesor: 'Abner Garcia', numeroEstudiantes: 90, matriculaAbierta: false},
-  {nombre: 'SQL', comision: '31310', profesor: 'Abner Garcia', numeroEstudiantes: 44, matriculaAbierta: true},
-  {nombre: 'Web 3.0', comision: '32380', profesor: 'Abner Garcia', numeroEstudiantes: 63, matriculaAbierta: true}
+const ELEMENT_DATA: Curso[] = [
+  { nombre: 'Gabriela', curso: 'Diseño', nota: '4.1' },
+  { nombre: 'Patricia', curso: 'Cálculo', nota: '3.5' },
+  { nombre: 'Nicolle', curso: 'Animación', nota: '5.0' },
+  { nombre: 'Sofía', curso: 'Videojuegos', nota: '3.8' },
+  { nombre: 'María', curso: 'UX/UI', nota: '4.6' },
+  { nombre: 'Talía', curso: 'Introducción', nota: '3.9' }
 ]
 
 @Component({
@@ -30,8 +27,9 @@ const ELEMENT_DATA: Curso [] = [
 export class TablaComponent implements OnInit {
 
   //Propiedades
-  columnas: string[] = ['nombre', 'comision', 'profesor', 'numeroEstudiantes', 'matriculaAbierta', 'acciones'];
+  columnas: string[] = ['nombre', 'curso', 'nota', 'acciones'];
   dataSource: MatTableDataSource<Curso> = new MatTableDataSource(ELEMENT_DATA);
+  @ViewChild(MatTable) tabla!: MatTable<Curso>;
 
   constructor(
     private dialog: MatDialog
@@ -40,16 +38,37 @@ export class TablaComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  eliminar (elemento: Curso) {
-    this.dataSource.data = this.dataSource.data.filter((curso: Curso) => curso.comision != elemento.comision);
+  agregar() {
+    const dialogRef = this.dialog.open(EditDialogComponent,
+      {
+        width: '350px'
+      });
   }
 
-  editar (elemento: Curso) {
+  editar(elemento: Curso) {
     const dialogRef = this.dialog.open(EditDialogComponent,
       {
         width: '350px',
         data: elemento
-      })
+      });
+
+    dialogRef.afterClosed().subscribe(resultado => {
+      if (resultado) {
+        const item = this.dataSource.data.find(curso => curso.curso === resultado.curso);
+        const index = this.dataSource.data.indexOf(item!);
+        this.dataSource.data[index] = resultado;
+        this.tabla.renderRows();
+      }
+    })
+  }
+
+  eliminar(elemento: Curso) {
+    this.dataSource.data = this.dataSource.data.filter((curso: Curso) => curso.curso != elemento.curso);
+  }
+
+  filtrar(event: Event) {
+    const valorObtenido = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = valorObtenido.trim().toLocaleLowerCase();
   }
 
 }
